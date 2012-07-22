@@ -1,0 +1,109 @@
+DC PM Podcasting Software Install Document.
+
+DC PM Podcasting software requires a lot of perl modules, ubuntu software pacakages, and some software installed from source.
+
+First install these Ubuntu Packages (YMMV with other distros):
+(sudo apt-get install (package))
+mysql-server  # make a note of the root password & update it later in the script...  We will assume for now that you choose the password : password, but please consider using something more secure.
+zbar-tools
+rsync
+boa
+flite 
+lame
+libimlib2
+libimlib2-dev
+
+Uninstall this Ubuntu package, if you have it installed:
+(sudo apt-get purge sox)
+sox
+
+These are perl modules that are required, and are core parts of perl:
+
+strict    
+CGI        
+File::Copy
+File::Find 
+
+Other modules 
+(installed via sudo perl -MCPAN -e shell ; then install [Module name] )
+
+File::Path 
+Image::Dot
+MP3::ID3v1Tag
+Net::Address::IP::Local
+Net::VNC
+Proc::Background
+URL::Encode
+URI::Escape
+
+Install from source (not the Ubuntu package sox):
+Browse here: http://sourceforge.net/projects/sox/?source=directory
+Then click on the download link...
+
+Now, extract the www.tar and main.tar.
+Extract main.tar in root's directory.  (Or in your directory, but you will need to use sudo and edit the config file appropriately.)
+Extract www.tar in /var/www
+
+In /root/ , edit config.ini
+vi config.ini
+
+Update: 
+[main] - Root directory for code (recommended /root ).
+[Mysql] - username & password.
+[record] - If you are using your built in audio connections, remove -D hw:1,0.  If you are using an external usb audio controler, which we recommend, just keep as is.  Update dtopic_default to a ressonable value
+[produce] - start_string, author, and title - update to your username or to your user group.
+# Note that public_url is the location where all of your public html content is pushed.
+[update_website] - website_url, rsync - update as appropriate
+
+Install the mysql databases...
+mysql -uroot -ppassword < create_podcasts.sql
+mysql -uroot -ppassword < create_present.sql
+
+Update the templates...
+cd templates
+vi index_head.html - This is used in generating the html webpage for the website
+vi rss_head.xml - This is used as a header for the podcast feed.  
+
+# Update boa's config so that it will work
+cd /etc/boa/
+vi boa.conf
+
+Edit the last line in the file from:
+ScriptAlias /cgi-bin/ /usr/lib/cgi-bin
+to
+ScriptAlias /cgi-bin/ /var/www/cgi-bin
+
+The following two edits are OPTIONAL but make your web site a little more secure:
+Comment out the Alias line above the ScriptAlias line.
+Comment out the UserDir setting, about 1/2 way through the config file.
+
+Then restart boa:
+/etc/init.d/boa restart
+cd /var/www/cgi-bin
+vi confi.ini and update the [mysql] section to contain appropriate username & password.
+
+# Test! Browse to http://localhost and see if you can add yourself as a presentor.  Note that you must have vnc enabled for this test to work.  Then, run a sample podcast by using the commands below.  If you can do that successfully, re-create the mysql databases above to their initial settings and you can do it for real. :)
+
+#### Usage
+
+Before you start allowing people to connect to the website to register as a speaker, run
+perl clean.pl
+
+Have the users go to your website.  Start your browse and point it to http://localhost.  It will inform you of the ip address for them to connect to.  If there is an issue with using the presentors screen via vnc, most errors should be detected, and the presentor is presented with options to fix it.
+
+When you are about to start recording, run:
+perl record.pl 
+
+Then enter the initial topic for the podcast.  After you hit return, you're recording!
+
+As the recording goes, type a number to grab a screen capture of the presentors screen.
+
+If there is a new topic, press T and you will be prompted to enter a new topic.
+
+If there is a curse word uttered, enter F, and a few seconds will be removed on either side of the recording.
+
+Use S or + followed by a number or command, and after 5 seconds, the command will be run.
+
+Use Q to quit.  At that point the recording will be stopped.
+
+To upload, run produce_all.pl.  Finally, run perl update_website.pl , which will update your website.
