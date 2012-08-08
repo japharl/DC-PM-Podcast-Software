@@ -36,7 +36,7 @@ mkpath $data_dir;
 my $sql = qq{INSERT into active_recording(epoch_start) value (?)};
 my $sth = $dbh->prepare($sql);
 $sth->execute($epoch);
-&insertEvent($epoch,"START",$topic);
+insertEvent($epoch,"START",$topic);
 my $recorder = Proc::Background->new($cfg->{record}->{record_string} . " " . $data_dir ."/audio.wav");
 sleep (1);
 if ($recorder->alive()){
@@ -81,7 +81,7 @@ while (1==1){
     print "Quiting...\n";
     $recorder->die();
     my $z = time;
-    &insertEvent($z,"QUIT");
+    insertEvent($z,"QUIT");
     exit(0);
   }
 
@@ -96,7 +96,7 @@ while (1==1){
         $vnc->login();
         print "conected ok...\n";
         my $z = time;
-        &insertEvent($z,"Screen Capture");
+        insertEvent($z,"Screen Capture");
         my $img = $vnc->capture();
         $img->save($data_dir . "/" . $z . ".png"); 
         print "Done!\n";

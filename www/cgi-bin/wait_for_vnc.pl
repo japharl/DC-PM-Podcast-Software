@@ -27,7 +27,7 @@ eval{
 };
 if ($@){
   # Error caught
-  &doInsert(1);
+  doInsert(1);
 }
 
 my $proc = Proc::Background->new("/usr/bin/zbarimg --raw /tmp/img_" . $source . ".png > /tmp/img_" . $source . "_result.txt");
@@ -50,12 +50,12 @@ if ($line eq $test){
   };
   my $a = $@;
   if ($a){
-    &doInsert(3);
+    doInsert(3);
   } else {
-    &doInsert(4);
+    doInsert(4);
   }
 } else {
-  &doInsert(2);
+  doInsert(2);
 }
 
 sub doInsert{
