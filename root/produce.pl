@@ -50,7 +50,7 @@ my $sthp = $dbh2->prepare($sqlp);
 $sthp->execute($epoch,$topic);
 
 my $last_id = $dbh2->{'mysql_insertid'};
-&writePodcastIntro($last_id,$epoch,$topic);
+writePodcastIntro($last_id,$epoch,$topic);
 
 my $x = Proc::Background->new($cfg->{produce}->{flite_path} . " " . $cfg->{produce}->{temp_directory} . "tmp.txt -o " . $cfg->{produce}->{temp_directory} . "tmp.wav");
 $x->wait();
