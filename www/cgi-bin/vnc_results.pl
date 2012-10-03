@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-use HTML::Barcode::Code128;
+
 use Image::Dot;
 use DBI;
 use Net::VNC;
