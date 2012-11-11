@@ -30,6 +30,10 @@ if (length($topic)==0){
 }
 
 my $epoch = time;
+if (length($cfg->{record}->{pre_record_exe})>0){
+  my $xa= Proc::Background->new($cfg->{record}->{pre_record_exe});
+  $xa->wait();
+}
 
 my $data_dir = $cfg->{record}->{data_path} . $epoch;
 mkpath $data_dir;
@@ -82,6 +86,10 @@ while (1==1){
     $recorder->die();
     my $z = time;
     insertEvent($z,"QUIT");
+    if (length($cfg->{record}->{post_record_exe})>0){
+      my $xa= Proc::Background->new($cfg->{record}->{post_record_exe});
+      $xa->wait(); 
+    }
     exit(0);
   }
 
